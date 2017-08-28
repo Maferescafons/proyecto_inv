@@ -1,0 +1,136 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <link rel="stylesheet" href="Bootstrap/css/bootstrap.css">
+
+
+
+
+</head>
+<body>
+<div class="container">
+  <div class="row" id="articulos">
+    <input type="text" name="q" placeholder="Search DOAJ" id="homepage-search-input">
+    <i class="icon-search orange">
+
+    </i>
+
+    <button type="button" onclick="javascript:callWebService();">Llamar a WS</button>
+
+    <div id="resultado_json"></div>
+
+
+
+
+    <script type="text/javascript">
+      // Procesar resultados del webservice
+
+      function webServiceResult(data) {
+
+
+        $("#resultado_json").empty();
+
+
+        for (var i = 0; i < 10000; i++) {
+
+          //document.getElementById("title").innerHTML=(data.results[i].bibjson.title ).value;
+          bibl = data.results[i].bibjson;
+          var  title = bibl.title = name= title;
+          var country = bibl.journal.country;
+          var number = bibl.number;
+          var volume = bibl.volume;
+          var issns = bibl.issns;
+          var language = bibl.language;
+          var year = bibl.year;
+          var abstract = bibl.abstract;
+          var keywords = bibl.keywords;
+
+
+
+          $("#resultado_json").append(  "<div class='row'>  " +
+              "<form action='/GuardarArticulo/crearArticuloQuemado' method='post'>" +
+            "<div class='card'> <div class='card-block'>" +
+            "<div >"+
+            "Titulo: "+  title + "<br>" +
+            "</div>"+
+            "Pais de publicacion: " + country +"<br>"+
+            "Numero: " + number + "<br>"+
+            "Volumen: " + volume + "<br>"+
+            "issns: " + issns + "<br>"+
+            "Lenguajes: " + language + "<br>"+
+            "Año de publicacion: " + year + "<br>"+
+            "Abstract: " + abstract + "<br>"  +
+            "keywords: " + keywords + "<br>"+
+            "<br>"+
+            "<a href='#' class='btn btn-primary'>full text</a>"+
+            "<button class='btn btn-outline-success'>Guardar en biblioteca</button>" +
+            "</div> </div>");
+             "</form>"
+
+
+          /*paisPublicacion = $("#resultado_json").append("Pais de publicacion: " + data.results[i].bibjson.journal.country +"<br>" );
+           numero = $("#resultado_json").append("Numero: " + data.results[i].bibjson.journal.number + "<br>");
+           volumen = $("#resultado_json").append("Volumen: " + data.results[i].bibjson.journal.volume + "<br>");
+           issns = $("#resultado_json").append("issns: " + data.results[i].bibjson.journal.issns + "<br>");
+           lenguajes = $("#resultado_json").append("Lenguajes: " + data.results[i].bibjson.journal.language + "<br>");
+           añoPublicacion = $("#resultado_json").append("Año de publicacion: " + data.results[i].bibjson.year + "<br>");
+           abstract = $("#resultado_json").append("Abstract: " + data.results[i].bibjson.abstract + "<br>");
+           keywords = $("#resultado_json").append("keywords: " + data.results[i].bibjson.keywords + "<br>");
+
+           /*for (j = 0; j < 10000; j++) {
+           $("#resultado_json1").append("Autor:" + data.results[i].bibjson.author[j].name + "<br>");
+           $("#resultado_json1").append("Categoria: " + data.results[i].bibjson.subject[j].term + "<br>");
+           / $("#resultado_json1").append("Link: " + data.results[i].bibjson.link[j].url + "<br>");
+
+           }*/
+
+        }
+
+
+      }
+
+
+      // Llamada al webservice
+      function callWebService()
+      {
+        var busqueda = document.getElementById("homepage-search-input").value;
+        var var1= "https://doaj.org/api/v1/search/articles/";
+        var var2= "?page=2&pageSize=10";
+        mm= busqueda;
+        console.log("Este es el valor del cookie:",mm);
+        var concatenacion= var1+busqueda+var2;
+        console.log("la url es:"+concatenacion);
+
+        try {
+
+          $.ajax({
+            url: concatenacion,
+            type: "get",
+            async: true,
+            contentType: "text/json; charset=utf-8",
+            dataType: "json",
+            success: function(msg) { webServiceResult(msg) },
+            error: function(jqXmlHttpRequest, textStatus, errorThrown) {
+              alert("Error leyendo datos.");
+            }
+          });
+        }
+
+        catch (err)
+        {
+          alert(err);
+        }
+
+      }
+    </script>
+  </div>
+
+</div>
+
+</body>
+</html>
